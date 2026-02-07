@@ -67,7 +67,7 @@ export default function Download() {
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-2xl font-bold font-display">Zenon v{latest?.version || "..."}</h2>
+                  <h2 className="text-2xl font-bold font-display">Zenon v1.0.1</h2>
                   {latest?.isLatest && (
                     <span className="px-2 py-0.5 rounded text-xs font-bold bg-accent/20 text-accent border border-accent/20">
                       LATEST
