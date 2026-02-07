@@ -103,14 +103,7 @@ export default function Download() {
                 Changelog
               </h3>
               <div className="bg-background/50 rounded-lg p-4 font-mono text-sm text-muted-foreground">
-                {latest?.description ? (
-                  <pre className="whitespace-pre-wrap font-mono">{latest.description}</pre>
-                ) : (
-                  <div className="animate-pulse space-y-2">
-                    <div className="h-4 bg-white/5 rounded w-3/4"></div>
-                    <div className="h-4 bg-white/5 rounded w-1/2"></div>
-                  </div>
-                )}
+                <pre className="whitespace-pre-wrap font-mono">Updated to support the latest Roblox version.</pre>
               </div>
             </div>
           </Card>
