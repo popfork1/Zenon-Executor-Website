@@ -11,27 +11,25 @@ export default function Download() {
   const { toast } = useToast();
 
   const handleDownload = () => {
-    if (!latest) return;
+    // Open download URL
+    window.open("/downloads/Zenon_Executor.zip", "_blank");
     
-    // Open download URL in new tab
-    window.open(latest.downloadUrl, "_blank");
-    
-    // Track download in backend
-    trackDownload(latest.id, {
-      onSuccess: () => {
-        toast({
-          title: "Download Started",
-          description: "Thank you for downloading Zenon Executor!",
-        });
-      },
-      onError: () => {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Something went wrong tracking the download.",
-        });
-      }
-    });
+    // Track download in backend if we have a release
+    if (latest) {
+      trackDownload(latest.id, {
+        onSuccess: () => {
+          toast({
+            title: "Download Started",
+            description: "Thank you for downloading Zenon Executor!",
+          });
+        },
+      });
+    } else {
+      toast({
+        title: "Download Started",
+        description: "Thank you for downloading Zenon Executor!",
+      });
+    }
   };
 
   const steps = [
@@ -89,7 +87,7 @@ export default function Download() {
               <Button
                 size="lg"
                 onClick={handleDownload}
-                disabled={isLoading || isPending || !latest}
+                disabled={isPending}
                 className="w-full md:w-auto text-lg h-14 px-8 bg-primary hover:bg-primary/90 shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:shadow-[0_0_30px_rgba(147,51,234,0.5)] transition-all"
               >
                 {isPending ? "Starting..." : "Download Installer"}
