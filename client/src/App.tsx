@@ -7,7 +7,6 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import Home from "@/pages/Home";
 import Download from "@/pages/Download";
-import FAQ from "@/pages/FAQ";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -15,8 +14,6 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/download" component={Download} />
-      <Route path="/faq" component={FAQ} />
-      <Route path="/features" component={Home} /> {/* Reuse Home for features for now */}
       <Route component={NotFound} />
     </Switch>
   );

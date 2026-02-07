@@ -10,9 +10,7 @@ export function Navbar() {
 
   const links = [
     { href: "/", label: "Home" },
-    { href: "/features", label: "Features" },
     { href: "/download", label: "Download" },
-    { href: "/faq", label: "FAQ" },
   ];
 
   return (

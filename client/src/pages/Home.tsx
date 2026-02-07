@@ -4,9 +4,34 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { FeatureCard } from "@/components/FeatureCard";
 import { useLatestRelease } from "@/hooks/use-releases";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export default function Home() {
   const { data: latest } = useLatestRelease();
+
+  const faqs = [
+    {
+      question: "Is Zenon safe to use?",
+      answer: "Yes, Zenon is completely safe. However, due to the nature of how executors work (injecting code into other processes), antivirus software may flag it as a false positive. We recommend disabling your antivirus while downloading and using Zenon."
+    },
+    {
+      question: "Will I get banned?",
+      answer: "Zenon uses advanced anti-detection methods to keep you safe. However, there is always a small risk when exploiting. We recommend using an alt account for maximum safety."
+    },
+    {
+      question: "Why is it not injecting?",
+      answer: "Make sure you have installed all required dependencies (VC++ Redistributable) and that your antivirus is not blocking the process. Also ensure you are using the Microsoft Store version of Roblox if specified in the current patch notes."
+    },
+    {
+      question: "Does it support Mac/Mobile?",
+      answer: "Currently, Zenon is only available for Windows PC. We are actively working on mobile and macOS versions, so stay tuned for updates."
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-background pt-16">
@@ -47,9 +72,6 @@ export default function Home() {
                   Download Now
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-lg border-white/10 hover:bg-white/5 hover:text-foreground">
-                View Features
-              </Button>
             </div>
             
             <div className="mt-12 flex items-center justify-center gap-8 text-muted-foreground">
@@ -70,7 +92,7 @@ export default function Home() {
       <section className="py-24 bg-secondary/30 border-y border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Why Choose Zenon?</h2>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Powerful Features</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Built by developers for gamers. We provide the most stable and feature-rich experience.
             </p>
@@ -144,6 +166,33 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-24 bg-background">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">FAQ</h2>
+            <p className="text-muted-foreground">Got questions? We've got answers.</p>
+          </div>
+
+          <Accordion type="single" collapsible className="space-y-4">
+            {faqs.map((faq, i) => (
+              <AccordionItem 
+                key={i} 
+                value={`item-${i}`}
+                className="border border-white/5 bg-card/30 rounded-lg px-4 data-[state=open]:border-primary/50 transition-colors"
+              >
+                <AccordionTrigger className="text-left font-medium hover:text-primary transition-colors py-4 text-lg">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground pb-4 leading-relaxed">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </section>
     </div>
