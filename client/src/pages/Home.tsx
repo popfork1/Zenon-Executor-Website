@@ -79,10 +79,6 @@ export default function Home() {
                 <div className="w-2 h-2 rounded-full bg-green-500" />
                 <span>Undetected</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-                <span>{(latest?.downloadCount || 15420).toLocaleString()}+ Downloads</span>
-              </div>
             </div>
           </motion.div>
         </div>
