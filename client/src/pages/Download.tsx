@@ -90,7 +90,7 @@ export default function Download() {
                 disabled={isPending}
                 className="w-full md:w-auto text-lg h-14 px-8 bg-primary hover:bg-primary/90 shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:shadow-[0_0_30px_rgba(147,51,234,0.5)] transition-all"
               >
-                {isPending ? "Starting..." : "Download Installer"}
+                {isPending ? "Starting..." : "Download"}
                 <DownloadIcon className="w-5 h-5 ml-2" />
               </Button>
             </div>
