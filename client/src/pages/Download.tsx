@@ -102,6 +102,7 @@ export default function Download() {
               </h3>
               <div className="bg-background/50 rounded-lg p-4 font-mono text-sm text-muted-foreground">
                 <pre className="whitespace-pre-wrap font-mono">-Updated to support the latest Roblox version
+
                 -New UI</pre>
               </div>
             </div>
