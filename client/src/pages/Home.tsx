@@ -142,12 +142,11 @@ export default function Home() {
       {/* Stats Section */}
       <section className="py-20 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="flex flex-wrap justify-center gap-8 text-center">
             {[
-              { label: "Active Users", value: "50K+" },
-              { label: "Scripts Supported", value: "99%" },
-              { label: "Uptime", value: "99.9%" },
-              { label: "Community", value: "100K+" },
+              { label: "UNC", value: "99%" },
+              { label: "sUNC", value: "98%" },
+              { label: "Level", value: "8" },
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -155,7 +154,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/5"
+                className="p-6 min-w-[200px] rounded-2xl bg-white/5 backdrop-blur-sm border border-white/5"
               >
                 <div className="text-3xl md:text-4xl font-bold font-display text-primary mb-2">
                   {stat.value}
