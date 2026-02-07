@@ -1,9 +1,9 @@
-modules = ["nodejs-20", "web", "postgresql-16"]
+modules = ["nodejs-20", "web"]
 run = "npm run dev"
 hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
-channel = "stable-24_05"
+channel = "stable-25_05"
 
 [[ports]]
 localPort = 5000
@@ -38,10 +38,12 @@ task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5000
 
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [agent]
 expertMode = true
 
 [userenv]
 
 [userenv.shared]
-DATABASE_URL = "psql 'postgresql://neondb_owner:npg_1Marh0qtUWKj@ep-misty-frost-ai4z5htp-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'"
