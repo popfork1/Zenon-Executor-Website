@@ -29,7 +29,7 @@ export default function Home() {
     },
     {
       question: "Does it support Mac/Mobile?",
-      answer: "Currently, Zenon is only available for Windows PC. We are actively working on mobile and macOS versions, so stay tuned for updates."
+      answer: "Currently, Zenon is only available for Windows PC."
     }
   ];
 
