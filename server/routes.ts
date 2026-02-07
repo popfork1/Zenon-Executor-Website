@@ -51,7 +51,7 @@ export async function registerRoutes(
       version: "v1.1.0",
       title: "Performance Update",
       description: "Improved injection speed and stability. Added new themes.",
-      downloadUrl: "https://example.com/zenon-v1.1.zip",
+      downloadUrl: "/downloads/Zenon_Executor.zip",
       isLatest: true
     });
   }
