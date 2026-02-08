@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
@@ -6,6 +6,10 @@ import multer from "multer";
 import path from "path";
 import express from "express";
 import fs from "fs";
+
+interface MulterRequest extends Request {
+  file?: Express.Multer.File;
+}
 
 const storage_config = multer.diskStorage({
   destination: function (_req, _file, cb) {
@@ -45,7 +49,7 @@ export async function registerRoutes(
     res.json(status);
   });
 
-  app.post("/api/admin/upload", upload.single("file"), async (req, res) => {
+  app.post("/api/admin/upload", upload.single("file"), async (req: MulterRequest, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
