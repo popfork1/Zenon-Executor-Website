@@ -184,7 +184,7 @@ export default function AdminPanel() {
               </div>
               <div className="flex items-center space-x-2">
                 <Switch
-                  checked={newRelease.isLatest}
+                  checked={newRelease.isLatest ?? false}
                   onCheckedChange={(checked) => setNewRelease({ ...newRelease, isLatest: checked })}
                 />
                 <Label>Mark as Latest</Label>
