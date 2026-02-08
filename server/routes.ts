@@ -69,6 +69,14 @@ export async function registerRoutes(
     res.json(release);
   });
 
+  app.delete("/api/admin/releases/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid ID" });
+    const success = await storage.deleteRelease(id);
+    if (!success) return res.status(404).json({ message: "Release not found" });
+    res.json({ success: true });
+  });
+
   app.get(api.releases.getLatest.path, async (_req, res) => {
     const release = await storage.getLatestRelease();
     if (!release) {

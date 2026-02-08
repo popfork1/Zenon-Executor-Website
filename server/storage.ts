@@ -8,6 +8,7 @@ export interface IStorage {
   createRelease(release: InsertRelease): Promise<Release>;
   updateRelease(id: number, release: Partial<InsertRelease>): Promise<Release | undefined>;
   incrementDownloadCount(id: number): Promise<Release | undefined>;
+  deleteRelease(id: number): Promise<boolean>;
   getSystemStatus(): Promise<SystemStatus>;
   updateSystemStatus(status: InsertSystemStatus): Promise<SystemStatus>;
 }
@@ -82,6 +83,14 @@ export class DatabaseStorage implements IStorage {
       .returning();
       
     return updated;
+  }
+
+  async deleteRelease(id: number): Promise<boolean> {
+    const [deleted] = await db
+      .delete(releases)
+      .where(eq(releases.id, id))
+      .returning();
+    return !!deleted;
   }
 
   async getSystemStatus(): Promise<SystemStatus> {

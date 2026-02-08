@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Release, SystemStatus } from "@shared/schema";
-import { Loader2, RefreshCcw, Save } from "lucide-react";
+import { Loader2, RefreshCcw, Save, Trash2 } from "lucide-react";
 
 export default function AdminPanel() {
   const { toast } = useToast();
@@ -47,6 +47,23 @@ export default function AdminPanel() {
         isLatest: false
       });
       toast({ title: "Release created successfully" });
+    },
+  });
+
+  const deleteReleaseMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/admin/releases/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/releases"] });
+      toast({ title: "Release deleted successfully" });
+    },
+    onError: (error: Error) => {
+      toast({ 
+        title: "Delete failed", 
+        description: error.message,
+        variant: "destructive" 
+      });
     },
   });
 
@@ -321,6 +338,18 @@ export default function AdminPanel() {
                     )}
                     <Button variant="outline" size="sm" onClick={() => setEditingRelease(release)}>
                       Edit Release Info
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      onClick={() => {
+                        if (confirm("Are you sure you want to delete this release?")) {
+                          deleteReleaseMutation.mutate(release.id);
+                        }
+                      }}
+                      disabled={deleteReleaseMutation.isPending}
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
