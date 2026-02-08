@@ -2,12 +2,34 @@ import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
+import multer from "multer";
+import path from "path";
+import express from "express";
+import fs from "fs";
+
+const storage_config = multer.diskStorage({
+  destination: function (_req, _file, cb) {
+    const dir = "./uploads";
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: function (_req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage_config });
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  
+  // Serve uploads directory
+  app.use("/uploads", express.static("uploads"));
+
   app.get(api.releases.list.path, async (_req, res) => {
     const releases = await storage.getAllReleases();
     res.json(releases);
@@ -21,6 +43,14 @@ export async function registerRoutes(
   app.post("/api/admin/status", async (req, res) => {
     const status = await storage.updateSystemStatus(req.body);
     res.json(status);
+  });
+
+  app.post("/api/admin/upload", upload.single("file"), async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.json({ url: fileUrl });
   });
 
   app.patch("/api/admin/releases/:id", async (req, res) => {
