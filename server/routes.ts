@@ -49,7 +49,7 @@ export async function registerRoutes(
     res.json(status);
   });
 
-  app.post("/api/admin/upload", upload.single("file"), async (req: MulterRequest, res) => {
+  app.post("/api/admin/upload", upload.single("file"), async (req: MulterRequest, res: express.Response) => {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }

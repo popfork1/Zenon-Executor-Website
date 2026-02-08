@@ -81,17 +81,15 @@ export default function AdminPanel() {
       </Card>
 
       <div className="grid gap-6">
-        <h2 className="text-2xl font-semibold">Manage Releases</h2>
-        {releases?.map((release) => (
+        <h2 className="text-2xl font-semibold">Manage Release</h2>
+        {releases?.filter(r => r.isLatest).slice(0, 1).map((release) => (
           <Card key={release.id}>
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
                 <span>{release.title} ({release.version})</span>
-                {release.isLatest && (
-                  <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
-                    Latest
-                  </span>
-                )}
+                <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
+                  Latest
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -106,66 +104,73 @@ export default function AdminPanel() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Download URL</Label>
-                      <div className="flex space-x-2">
-                        <Input
-                          value={editingRelease.downloadUrl}
-                          onChange={(e) => setEditingRelease({ ...editingRelease, downloadUrl: e.target.value })}
-                        />
-                        <div className="relative">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => document.getElementById(`file-upload-${editingRelease.id}`)?.click()}
-                          >
-                            Browse
-                          </Button>
-                          <input
-                            id={`file-upload-${editingRelease.id}`}
-                            type="file"
-                            className="hidden"
-                            onChange={async (e) => {
-                              const file = e.target.files?.[0];
-                              if (!file) return;
-
-                              const formData = new FormData();
-                              formData.append("file", file);
-
-                              try {
-                                const res = await fetch("/api/admin/upload", {
-                                  method: "POST",
-                                  body: formData,
-                                });
-                                if (!res.ok) throw new Error("Upload failed");
-                                const data = await res.json();
-                                setEditingRelease({ ...editingRelease, downloadUrl: data.url });
-                                toast({ title: "File uploaded successfully" });
-                              } catch (error) {
-                                toast({
-                                  title: "Upload failed",
-                                  description: "Could not upload the file. Please try again.",
-                                  variant: "destructive",
-                                });
-                              }
-                            }}
-                          />
-                        </div>
-                      </div>
+                      <Label>Title</Label>
+                      <Input
+                        value={editingRelease.title}
+                        onChange={(e) => setEditingRelease({ ...editingRelease, title: e.target.value })}
+                      />
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      checked={editingRelease.isLatest || false}
-                      onCheckedChange={(checked) => setEditingRelease({ ...editingRelease, isLatest: checked })}
+                  <div className="space-y-2">
+                    <Label>Description</Label>
+                    <Input
+                      value={editingRelease.description}
+                      onChange={(e) => setEditingRelease({ ...editingRelease, description: e.target.value })}
                     />
-                    <Label>Mark as Latest Release</Label>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Download URL</Label>
+                    <div className="flex space-x-2">
+                      <Input
+                        value={editingRelease.downloadUrl}
+                        onChange={(e) => setEditingRelease({ ...editingRelease, downloadUrl: e.target.value })}
+                      />
+                      <div className="relative">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => document.getElementById(`file-upload-${editingRelease.id}`)?.click()}
+                        >
+                          Browse
+                        </Button>
+                        <input
+                          id={`file-upload-${editingRelease.id}`}
+                          type="file"
+                          className="hidden"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+
+                            const formData = new FormData();
+                            formData.append("file", file);
+
+                            try {
+                              const res = await fetch("/api/admin/upload", {
+                                method: "POST",
+                                body: formData,
+                              });
+                              if (!res.ok) throw new Error("Upload failed");
+                              const data = await res.json();
+                              setEditingRelease({ ...editingRelease, downloadUrl: data.url });
+                              toast({ title: "File uploaded successfully" });
+                            } catch (error) {
+                              toast({
+                                title: "Upload failed",
+                                description: "Could not upload the file. Please try again.",
+                                variant: "destructive",
+                              });
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div className="flex space-x-2">
                     <Button 
                       onClick={() => updateReleaseMutation.mutate(editingRelease)}
                       disabled={updateReleaseMutation.isPending}
                     >
-                      <Save className="mr-2 h-4 w-4" /> Save
+                      <Save className="mr-2 h-4 w-4" /> Save Changes
                     </Button>
                     <Button variant="outline" onClick={() => setEditingRelease(null)}>
                       Cancel
@@ -174,17 +179,25 @@ export default function AdminPanel() {
                 </div>
               ) : (
                 <div className="flex justify-between items-center">
-                  <div className="text-sm text-muted-foreground">
-                    URL: {release.downloadUrl}
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">
+                      URL: {release.downloadUrl}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Downloads: {release.downloadCount}
+                    </div>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => setEditingRelease(release)}>
-                    Edit
+                  <Button variant="outline" size="sm" onClick={() => setEditingRelease(release)}>
+                    Edit Release Info
                   </Button>
                 </div>
               )}
             </CardContent>
           </Card>
         ))}
+        {(!releases || releases.filter(r => r.isLatest).length === 0) && releases?.[0] && (
+          <p className="text-sm text-muted-foreground italic">No latest release found. Please mark a release as latest in the database or wait for seeding.</p>
+        )}
       </div>
     </div>
   );

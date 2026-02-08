@@ -69,7 +69,7 @@ export default function Download() {
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-2xl font-bold font-display">Zenon v1.0.1</h2>
+                  <h2 className="text-2xl font-bold font-display">{latest?.title || "Zenon Executor"}</h2>
                   {latest?.isLatest && (
                     <span className="px-2 py-0.5 rounded text-xs font-bold bg-accent/20 text-accent border border-accent/20">
                       LATEST
@@ -79,7 +79,7 @@ export default function Download() {
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    Updated today
+                    Version {latest?.version || "v1.0.0"}
                   </span>
                   <span className="flex items-center gap-1">
                     <DownloadIcon className="w-4 h-4" />
@@ -102,12 +102,10 @@ export default function Download() {
             <div className="mt-8 pt-8 border-t border-white/5">
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <Terminal className="w-5 h-5 text-primary" />
-                Changelog
+                Release Notes
               </h3>
               <div className="bg-background/50 rounded-lg p-4 font-mono text-sm text-muted-foreground">
-                <pre className="whitespace-pre-wrap font-mono">-Updated to support the latest Roblox version
-
-                -New UI</pre>
+                <pre className="whitespace-pre-wrap font-mono">{latest?.description || "No release notes available."}</pre>
               </div>
             </div>
           </Card>
