@@ -163,17 +163,13 @@ export default function AdminPanel() {
               </div>
               <div className="space-y-2">
                 <Label>Download URL</Label>
-                <div className="flex space-x-2">
-                  <Input
-                    value={newRelease.downloadUrl}
-                    onChange={(e) => setNewRelease({ ...newRelease, downloadUrl: e.target.value })}
-                  />
                   <Button
                     type="button"
                     variant="outline"
+                    className="w-full"
                     onClick={() => document.getElementById('new-file-upload')?.click()}
                   >
-                    Browse
+                    {newRelease.downloadUrl ? `Selected: ${newRelease.downloadUrl.split('/').pop()}` : 'Browse File'}
                   </Button>
                   <input
                     id="new-file-upload"
@@ -197,7 +193,6 @@ export default function AdminPanel() {
                       }
                     }}
                   />
-                </div>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch
@@ -260,48 +255,43 @@ export default function AdminPanel() {
                   <div className="space-y-2">
                     <Label>Download URL</Label>
                     <div className="flex space-x-2">
-                      <Input
-                        value={editingRelease.downloadUrl}
-                        onChange={(e) => setEditingRelease({ ...editingRelease, downloadUrl: e.target.value })}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => document.getElementById(`file-upload-${editingRelease.id}`)?.click()}
+                      >
+                        {editingRelease.downloadUrl ? `Selected: ${editingRelease.downloadUrl.split('/').pop()}` : 'Browse File'}
+                      </Button>
+                      <input
+                        id={`file-upload-${editingRelease.id}`}
+                        type="file"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+
+                          const formData = new FormData();
+                          formData.append("file", file);
+
+                          try {
+                            const res = await fetch("/api/admin/upload", {
+                              method: "POST",
+                              body: formData,
+                            });
+                            if (!res.ok) throw new Error("Upload failed");
+                            const data = await res.json();
+                            setEditingRelease({ ...editingRelease, downloadUrl: data.url });
+                            toast({ title: "File uploaded successfully" });
+                          } catch (error) {
+                            toast({
+                              title: "Upload failed",
+                              description: "Could not upload the file. Please try again.",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
                       />
-                      <div className="relative">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => document.getElementById(`file-upload-${editingRelease.id}`)?.click()}
-                        >
-                          Browse
-                        </Button>
-                        <input
-                          id={`file-upload-${editingRelease.id}`}
-                          type="file"
-                          className="hidden"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-
-                            const formData = new FormData();
-                            formData.append("file", file);
-
-                            try {
-                              const res = await fetch("/api/admin/upload", {
-                                method: "POST",
-                                body: formData,
-                              });
-                              if (!res.ok) throw new Error("Upload failed");
-                              const data = await res.json();
-                              setEditingRelease({ ...editingRelease, downloadUrl: data.url });
-                              toast({ title: "File uploaded successfully" });
-                            } catch (error) {
-                              toast({
-                                title: "Upload failed",
-                                description: "Could not upload the file. Please try again.",
-                                variant: "destructive",
-                              });
-                            }
-                          }}
-                        />
-                      </div>
                     </div>
                   </div>
                   <div className="flex space-x-2">
