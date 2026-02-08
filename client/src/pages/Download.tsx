@@ -12,7 +12,11 @@ export default function Download() {
 
   const handleDownload = () => {
     // Open download URL
-    window.open("/downloads/Zenon_Executor.zip", "_blank");
+    if (latest?.downloadUrl) {
+      window.open(latest.downloadUrl, "_blank");
+    } else {
+      window.open("/downloads/Zenon_Executor.zip", "_blank");
+    }
     
     // Track download in backend if we have a release
     if (latest) {
