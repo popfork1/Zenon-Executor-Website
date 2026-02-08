@@ -4,6 +4,8 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { FeatureCard } from "@/components/FeatureCard";
 import { useLatestRelease } from "@/hooks/use-releases";
+import { useQuery } from "@tanstack/react-query";
+import { SystemStatus } from "@shared/schema";
 import {
   Accordion,
   AccordionContent,
@@ -13,6 +15,9 @@ import {
 
 export default function Home() {
   const { data: latest } = useLatestRelease();
+  const { data: status } = useQuery<SystemStatus>({
+    queryKey: ["/api/status"],
+  });
 
   const faqs = [
     {
@@ -75,6 +80,10 @@ export default function Home() {
             </div>
             
             <div className="mt-12 flex items-center justify-center gap-8 text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${status?.isUp ? "bg-green-500" : "bg-red-500"}`} />
+                <span>{status?.isUp ? "Service Online" : "Service Offline"}</span>
+              </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-green-500" />
                 <span>Undetected</span>

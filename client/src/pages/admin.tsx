@@ -14,6 +14,14 @@ import { Loader2, RefreshCcw, Save } from "lucide-react";
 export default function AdminPanel() {
   const { toast } = useToast();
   const [editingRelease, setEditingRelease] = useState<Release | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [newRelease, setNewRelease] = useState<Partial<Release>>({
+    version: "",
+    title: "",
+    description: "",
+    downloadUrl: "",
+    isLatest: false
+  });
 
   const { data: releases, isLoading: releasesLoading } = useQuery<Release[]>({
     queryKey: ["/api/releases"],
@@ -21,6 +29,25 @@ export default function AdminPanel() {
 
   const { data: status, isLoading: statusLoading } = useQuery<SystemStatus>({
     queryKey: ["/api/status"],
+  });
+
+  const createReleaseMutation = useMutation({
+    mutationFn: async (data: Partial<Release>) => {
+      const res = await apiRequest("POST", "/api/releases", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/releases"] });
+      setIsCreating(false);
+      setNewRelease({
+        version: "",
+        title: "",
+        description: "",
+        downloadUrl: "",
+        isLatest: false
+      });
+      toast({ title: "Release created successfully" });
+    },
   });
 
   const updateStatusMutation = useMutation({
@@ -81,8 +108,103 @@ export default function AdminPanel() {
       </Card>
 
       <div className="grid gap-6">
-        <h2 className="text-2xl font-semibold">Manage Release</h2>
-        {releases?.filter(r => r.isLatest).slice(0, 1).map((release) => (
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-semibold">Manage Releases</h2>
+          <Button onClick={() => setIsCreating(true)}>Create New Release</Button>
+        </div>
+
+        {isCreating && (
+          <Card>
+            <CardHeader>
+              <CardTitle>New Release</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Version</Label>
+                  <Input
+                    value={newRelease.version}
+                    onChange={(e) => setNewRelease({ ...newRelease, version: e.target.value })}
+                    placeholder="e.g. v1.2.0"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Title</Label>
+                  <Input
+                    value={newRelease.title}
+                    onChange={(e) => setNewRelease({ ...newRelease, title: e.target.value })}
+                    placeholder="e.g. Security Update"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <Input
+                  value={newRelease.description}
+                  onChange={(e) => setNewRelease({ ...newRelease, description: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Download URL</Label>
+                <div className="flex space-x-2">
+                  <Input
+                    value={newRelease.downloadUrl}
+                    onChange={(e) => setNewRelease({ ...newRelease, downloadUrl: e.target.value })}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById('new-file-upload')?.click()}
+                  >
+                    Browse
+                  </Button>
+                  <input
+                    id="new-file-upload"
+                    type="file"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      try {
+                        const res = await fetch("/api/admin/upload", {
+                          method: "POST",
+                          body: formData,
+                        });
+                        const data = await res.json();
+                        setNewRelease({ ...newRelease, downloadUrl: data.url });
+                        toast({ title: "File uploaded" });
+                      } catch (err) {
+                        toast({ title: "Upload failed", variant: "destructive" });
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  checked={newRelease.isLatest}
+                  onCheckedChange={(checked) => setNewRelease({ ...newRelease, isLatest: checked })}
+                />
+                <Label>Mark as Latest</Label>
+              </div>
+              <div className="flex space-x-2">
+                <Button 
+                  onClick={() => createReleaseMutation.mutate(newRelease)}
+                  disabled={createReleaseMutation.isPending}
+                >
+                  Create Release
+                </Button>
+                <Button variant="outline" onClick={() => setIsCreating(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {releases?.map((release) => (
           <Card key={release.id}>
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
@@ -178,7 +300,7 @@ export default function AdminPanel() {
                   </div>
                 </div>
               ) : (
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center w-full">
                   <div className="space-y-1">
                     <div className="text-sm text-muted-foreground">
                       URL: {release.downloadUrl}
@@ -187,9 +309,20 @@ export default function AdminPanel() {
                       Downloads: {release.downloadCount}
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => setEditingRelease(release)}>
-                    Edit Release Info
-                  </Button>
+                  <div className="flex space-x-2">
+                    {!release.isLatest && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => updateReleaseMutation.mutate({ id: release.id, isLatest: true })}
+                      >
+                        Make Latest
+                      </Button>
+                    )}
+                    <Button variant="outline" size="sm" onClick={() => setEditingRelease(release)}>
+                      Edit Release Info
+                    </Button>
+                  </div>
                 </div>
               )}
             </CardContent>

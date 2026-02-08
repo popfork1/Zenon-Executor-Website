@@ -34,6 +34,11 @@ export async function registerRoutes(
   // Serve uploads directory
   app.use("/uploads", express.static("uploads"));
 
+  app.post(api.releases.list.path, async (req, res) => {
+    const release = await storage.createRelease(req.body);
+    res.json(release);
+  });
+
   app.get(api.releases.list.path, async (_req, res) => {
     const releases = await storage.getAllReleases();
     res.json(releases);
