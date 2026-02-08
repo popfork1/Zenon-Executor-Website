@@ -100,25 +100,29 @@ export async function registerRoutes(
   });
 
   // Seed data if empty
-  const existing = await storage.getAllReleases();
-  if (existing.length === 0) {
-    console.log("Seeding initial release data...");
-    await storage.createRelease({
-      version: "v1.0.0",
-      title: "Zenon Executor Initial Release",
-      description: "First public release of Zenon Executor. Features include key system, script hub, and more.",
-      downloadUrl: "https://example.com/zenon-v1.zip",
-      isLatest: false
-    });
-    
-    await storage.createRelease({
-      version: "v1.1.0",
-      title: "Performance Update",
-      description: "Improved injection speed and stability. Added new themes.",
-      downloadUrl: "/downloads/Zenon_Executor.zip",
-      isLatest: true
-    });
-  }
+  const checkInitialSeed = async () => {
+    const existing = await storage.getAllReleases();
+    if (existing.length === 0) {
+      console.log("Seeding initial release data...");
+      await storage.createRelease({
+        version: "v1.0.0",
+        title: "Zenon Executor Initial Release",
+        description: "First public release of Zenon Executor. Features include key system, script hub, and more.",
+        downloadUrl: "https://example.com/zenon-v1.zip",
+        isLatest: false
+      });
+      
+      await storage.createRelease({
+        version: "v1.1.0",
+        title: "Performance Update",
+        description: "Improved injection speed and stability. Added new themes.",
+        downloadUrl: "/downloads/Zenon_Executor.zip",
+        isLatest: true
+      });
+    }
+  };
+
+  await checkInitialSeed();
 
   return httpServer;
 }
