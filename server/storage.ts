@@ -1,12 +1,15 @@
 import { db } from "./db";
-import { releases, type Release, type InsertRelease } from "@shared/schema";
+import { releases, type Release, type InsertRelease, systemStatus, type SystemStatus, type InsertSystemStatus } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   getLatestRelease(): Promise<Release | undefined>;
   getAllReleases(): Promise<Release[]>;
   createRelease(release: InsertRelease): Promise<Release>;
+  updateRelease(id: number, release: Partial<InsertRelease>): Promise<Release | undefined>;
   incrementDownloadCount(id: number): Promise<Release | undefined>;
+  getSystemStatus(): Promise<SystemStatus>;
+  updateSystemStatus(status: InsertSystemStatus): Promise<SystemStatus>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -49,6 +52,21 @@ export class DatabaseStorage implements IStorage {
     return release;
   }
 
+  async updateRelease(id: number, update: Partial<InsertRelease>): Promise<Release | undefined> {
+    if (update.isLatest) {
+      await db.update(releases)
+        .set({ isLatest: false })
+        .where(eq(releases.isLatest, true));
+    }
+
+    const [updated] = await db
+      .update(releases)
+      .set(update)
+      .where(eq(releases.id, id))
+      .returning();
+    return updated;
+  }
+
   async incrementDownloadCount(id: number): Promise<Release | undefined> {
     const [release] = await db
       .select()
@@ -63,6 +81,25 @@ export class DatabaseStorage implements IStorage {
       .where(eq(releases.id, id))
       .returning();
       
+    return updated;
+  }
+
+  async getSystemStatus(): Promise<SystemStatus> {
+    const [status] = await db.select().from(systemStatus).limit(1);
+    if (!status) {
+      const [newStatus] = await db.insert(systemStatus).values({ isUp: true }).returning();
+      return newStatus;
+    }
+    return status;
+  }
+
+  async updateSystemStatus(status: InsertSystemStatus): Promise<SystemStatus> {
+    const existing = await this.getSystemStatus();
+    const [updated] = await db
+      .update(systemStatus)
+      .set({ ...status, lastUpdated: new Date() })
+      .where(eq(systemStatus.id, existing.id))
+      .returning();
     return updated;
   }
 }

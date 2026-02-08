@@ -13,6 +13,23 @@ export async function registerRoutes(
     res.json(releases);
   });
 
+  app.get("/api/status", async (_req, res) => {
+    const status = await storage.getSystemStatus();
+    res.json(status);
+  });
+
+  app.post("/api/admin/status", async (req, res) => {
+    const status = await storage.updateSystemStatus(req.body);
+    res.json(status);
+  });
+
+  app.patch("/api/admin/releases/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const release = await storage.updateRelease(id, req.body);
+    if (!release) return res.status(404).send("Release not found");
+    res.json(release);
+  });
+
   app.get(api.releases.getLatest.path, async (_req, res) => {
     const release = await storage.getLatestRelease();
     if (!release) {
