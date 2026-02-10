@@ -29,7 +29,7 @@ export function Footer() {
             <h4 className="font-bold text-foreground mb-4">Support</h4>
             <ul className="space-y-2">
               <li><Link href="/faq" className="text-muted-foreground hover:text-primary transition-colors">FAQ</Link></li>
-              <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Discord Server</a></li>
+              <li><a href="https://discord.gg/zd3c9g8qw5" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">Discord Server</a></li>
               <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Contact Us</a></li>
             </ul>
           </div>
@@ -47,7 +47,7 @@ export function Footer() {
             <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
               <Twitter className="w-5 h-5" />
             </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+            <a href="https://discord.gg/zd3c9g8qw5" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
               <Disc className="w-5 h-5" />
             </a>
           </div>
