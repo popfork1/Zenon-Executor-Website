@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Download, Shield, Zap, Terminal, Code2, Globe } from "lucide-react";
+import { Download, Shield, Zap, Terminal, Code2, Globe, Disc } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { FeatureCard } from "@/components/FeatureCard";
@@ -77,6 +77,12 @@ export default function Home() {
                   Download Now
                 </Button>
               </Link>
+              <a href="https://discord.gg/zd3c9g8qw5" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-lg border-white/10 hover:bg-white/5 transition-all">
+                  <Disc className="w-5 h-5 mr-2" />
+                  Join Discord
+                </Button>
+              </a>
             </div>
             
             <div className="mt-12 flex items-center justify-center gap-8 text-muted-foreground">
