@@ -106,10 +106,7 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              The most powerful, undetectable, and feature-rich script executor for Roblox.
-              Choose between Velocity and Xeno for the ultimate gaming experience.
-            </p>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">The most powerful, undetectable, and feature-rich script executor for Roblox. Choose between Velocity's API and Xeno's API for the ultimate gaming experience.</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto mb-12">
               <DownloadCard 
@@ -143,7 +140,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-
       {/* Features Grid */}
       <section className="py-24 bg-secondary/30 border-y border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -176,7 +172,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* FAQ Section */}
       <section className="py-24 bg-background">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
