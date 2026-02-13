@@ -38,16 +38,11 @@ function DownloadCard({ executorType, title, description }: { executorType: stri
         <Button 
           className="w-full bg-primary hover:bg-primary/90 text-white gap-2"
           asChild
-          disabled={!latest}
         >
-          {latest ? (
-            <a href={latest.downloadUrl} target="_blank" rel="noopener noreferrer">
-              <Download className="w-4 h-4" />
-              Download {title}
-            </a>
-          ) : (
-            <span>{isLoading ? "Loading..." : "No Release Found"}</span>
-          )}
+          <Link href={`/download#${executorType}`}>
+            <Download className="w-4 h-4" />
+            Download {title}
+          </Link>
         </Button>
       </CardFooter>
     </Card>

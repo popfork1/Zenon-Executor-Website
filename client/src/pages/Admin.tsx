@@ -115,7 +115,7 @@ export default function Admin() {
           <span className="font-medium">System Status:</span>
           <Switch 
             checked={!!status?.isUp} 
-            onCheckedChange={(val) => statusMutation.mutate(val)}
+            onCheckedChange={(val: boolean) => statusMutation.mutate(val)}
           />
           <span className={status?.isUp ? "text-green-500" : "text-red-500"}>
             {status?.isUp ? "Online" : "Offline"}
