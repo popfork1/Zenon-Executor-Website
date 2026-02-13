@@ -15,7 +15,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/download" component={Download} />
-      <Route path="/admin" component={Admin} />
+      <Route path="/adminpanel503543829845" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );
