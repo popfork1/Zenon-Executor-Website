@@ -124,17 +124,17 @@ export class DatabaseStorage implements IStorage {
     return !!deleted;
   }
 
-  async getSystemStatus(): Promise<SystemStatus> {
-    const [status] = await db.select().from(systemStatus).limit(1);
+  async getSystemStatus(executorType: string = "velocity"): Promise<SystemStatus> {
+    const [status] = await db.select().from(systemStatus).where(eq(systemStatus.executorType, executorType)).limit(1);
     if (!status) {
-      const [newStatus] = await db.insert(systemStatus).values({ isUp: true }).returning();
+      const [newStatus] = await db.insert(systemStatus).values({ executorType, isUp: true }).returning();
       return newStatus;
     }
     return status;
   }
 
   async updateSystemStatus(status: InsertSystemStatus): Promise<SystemStatus> {
-    const existing = await this.getSystemStatus();
+    const existing = await this.getSystemStatus(status.executorType || "velocity");
     const [updated] = await db
       .update(systemStatus)
       .set({ ...status, lastUpdated: new Date() })

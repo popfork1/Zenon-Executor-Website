@@ -16,7 +16,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Badge } from "@/components/ui/badge";
 
 function DownloadCard({ executorType, title, description }: { executorType: string; title: string; description: string }) {
-  const { data: latest, isLoading } = useLatestRelease(executorType);
+  const { data: latest } = useLatestRelease(executorType);
 
   return (
     <Card className="bg-card/30 border-white/5 backdrop-blur-sm hover:border-primary/50 transition-all flex flex-col h-full">
@@ -34,7 +34,7 @@ function DownloadCard({ executorType, title, description }: { executorType: stri
           {description}
         </p>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="mt-auto">
         <Button 
           className="w-full bg-primary hover:bg-primary/90 text-white gap-2"
           asChild
@@ -50,8 +50,22 @@ function DownloadCard({ executorType, title, description }: { executorType: stri
 }
 
 export default function Home() {
-  const { data: status } = useQuery<SystemStatus>({
-    queryKey: ["/api/status"],
+  const { data: velocityStatus } = useQuery<SystemStatus>({
+    queryKey: ["/api/status", { executorType: "velocity" }],
+    queryFn: async () => {
+      const res = await fetch("/api/status?executorType=velocity");
+      if (!res.ok) throw new Error("Failed to fetch status");
+      return res.json();
+    }
+  });
+  
+  const { data: xenoStatus } = useQuery<SystemStatus>({
+    queryKey: ["/api/status", { executorType: "xeno" }],
+    queryFn: async () => {
+      const res = await fetch("/api/status?executorType=xeno");
+      if (!res.ok) throw new Error("Failed to fetch status");
+      return res.json();
+    }
   });
 
   const faqs = [
@@ -112,12 +126,18 @@ export default function Home() {
             
             <div className="flex items-center justify-center gap-8 text-muted-foreground">
               <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${status?.isUp ? "bg-green-500" : "bg-red-500"}`} />
-                <span>{status?.isUp ? "Service Online" : "Service Offline"}</span>
+                <div className="flex items-center gap-2 mr-4">
+                  <div className={`w-2 h-2 rounded-full ${velocityStatus?.isUp ? "bg-green-500" : "bg-red-500"}`} />
+                  <span className="text-xs uppercase font-bold">Velocity: {velocityStatus?.isUp ? "Online" : "Offline"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${xenoStatus?.isUp ? "bg-green-500" : "bg-red-500"}`} />
+                  <span className="text-xs uppercase font-bold">Xeno: {xenoStatus?.isUp ? "Online" : "Offline"}</span>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-green-500" />
-                <span>Undetected</span>
+                <span className="text-xs uppercase font-bold">Undetected</span>
               </div>
             </div>
           </motion.div>

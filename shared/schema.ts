@@ -16,6 +16,7 @@ export const releases = pgTable("releases", {
 
 export const systemStatus = pgTable("system_status", {
   id: serial("id").primaryKey(),
+  executorType: text("executor_type").notNull().default("velocity"),
   isUp: boolean("is_up").default(true).notNull(),
   lastUpdated: timestamp("last_updated").defaultNow().notNull(),
 });

@@ -44,8 +44,9 @@ export async function registerRoutes(
     res.json(releases);
   });
 
-  app.get("/api/status", async (_req, res) => {
-    const status = await storage.getSystemStatus();
+  app.get("/api/status", async (req, res) => {
+    const executorType = (req.query.executorType as string) || "velocity";
+    const status = await storage.getSystemStatus(executorType);
     res.json(status);
   });
 
