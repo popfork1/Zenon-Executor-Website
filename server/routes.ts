@@ -119,6 +119,16 @@ export async function registerRoutes(
         title: "Performance Update",
         description: "Improved injection speed and stability. Added new themes.",
         downloadUrl: "/downloads/Zenon_Executor.zip",
+        executorType: "velocity",
+        isLatest: true
+      });
+
+      await storage.createRelease({
+        version: "v1.0.0",
+        title: "Initial Xeno Release",
+        description: "Initial release of the Xeno API engine. Experimental stability.",
+        downloadUrl: "/downloads/Zenon_Xeno.zip",
+        executorType: "xeno",
         isLatest: true
       });
     }
