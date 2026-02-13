@@ -4,7 +4,10 @@ import * as schema from "@shared/schema";
 
 const { Pool } = pg;
 
-const connectionString = process.env.DATABASE_URL?.replace(/^psql\s+'(.*)'$/, '$1');
+const rawUrl = process.env.DATABASE_URL;
+const connectionString = rawUrl?.startsWith("psql '") 
+  ? rawUrl.replace(/^psql\s+'(.*)'$/, '$1')
+  : rawUrl;
 
 if (!connectionString) {
   throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");
