@@ -122,8 +122,8 @@ export default function Home() {
             </div>
             
             <div className="flex items-center justify-center gap-8 text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-2 mr-4">
+              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
+                <div className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${velocityStatus?.isUp ? "bg-green-500" : "bg-red-500"}`} />
                   <span className="text-xs uppercase font-bold">Velocity: {velocityStatus?.isUp ? "Online" : "Offline"}</span>
                 </div>
