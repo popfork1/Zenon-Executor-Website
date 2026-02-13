@@ -25,7 +25,7 @@ function DownloadCard({ executorType, title, description }: { executorType: stri
           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
             {executorType.toUpperCase()}
           </Badge>
-          {latest && <Badge variant="secondary" className="text-[10px]">v{latest.version}</Badge>}
+          {latest && <Badge variant="secondary" className="text-[10px]">{latest.version}</Badge>}
         </div>
         <CardTitle className="text-2xl font-display">{title}</CardTitle>
       </CardHeader>

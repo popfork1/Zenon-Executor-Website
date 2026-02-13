@@ -54,7 +54,7 @@ function DownloadSection({ executorType, title, id }: { executorType: string; ti
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
-                Version {latest?.version || "v1.0.0"}
+                Version {latest?.version || "1.0.0"}
               </span>
               <span className="flex items-center gap-1">
                 <DownloadIcon className="w-4 h-4" />
