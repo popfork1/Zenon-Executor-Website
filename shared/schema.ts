@@ -8,6 +8,7 @@ export const releases = pgTable("releases", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   downloadUrl: text("download_url").notNull(),
+  executorType: text("executor_type").notNull().default("velocity"),
   downloadCount: integer("download_count").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   isLatest: boolean("is_latest").default(false),

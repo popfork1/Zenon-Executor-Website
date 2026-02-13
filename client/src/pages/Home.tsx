@@ -1,20 +1,60 @@
 import { motion } from "framer-motion";
-import { Download, Shield, Zap, Terminal, Code2, Globe, Disc } from "lucide-react";
+import { Download, Shield, Zap, Terminal, Code2, Globe, Disc, Activity } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { FeatureCard } from "@/components/FeatureCard";
 import { useLatestRelease } from "@/hooks/use-releases";
 import { useQuery } from "@tanstack/react-query";
-import { SystemStatus } from "@shared/schema";
+import { SystemStatus, Release } from "@shared/schema";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+
+function DownloadCard({ executorType, title, description }: { executorType: string; title: string; description: string }) {
+  const { data: latest, isLoading } = useLatestRelease(executorType);
+
+  return (
+    <Card className="bg-card/30 border-white/5 backdrop-blur-sm hover:border-primary/50 transition-all flex flex-col h-full">
+      <CardHeader>
+        <div className="flex justify-between items-start mb-2">
+          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+            {executorType.toUpperCase()}
+          </Badge>
+          {latest && <Badge variant="secondary" className="text-[10px]">v{latest.version}</Badge>}
+        </div>
+        <CardTitle className="text-2xl font-display">{title}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex-1">
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          {description}
+        </p>
+      </CardContent>
+      <CardFooter>
+        <Button 
+          className="w-full bg-primary hover:bg-primary/90 text-white gap-2"
+          asChild
+          disabled={!latest}
+        >
+          {latest ? (
+            <a href={latest.downloadUrl} target="_blank" rel="noopener noreferrer">
+              <Download className="w-4 h-4" />
+              Download {title}
+            </a>
+          ) : (
+            <span>{isLoading ? "Loading..." : "No Release Found"}</span>
+          )}
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}
 
 export default function Home() {
-  const { data: latest } = useLatestRelease();
   const { data: status } = useQuery<SystemStatus>({
     queryKey: ["/api/status"],
   });
@@ -29,8 +69,8 @@ export default function Home() {
       answer: "Zenon uses advanced anti-detection methods to keep you safe. However, there is always a small risk when exploiting. We recommend using an alt account for maximum safety."
     },
     {
-      question: "Why is it not injecting?",
-      answer: "Make sure you have installed all required dependencies (VC++ Redistributable) and that your antivirus is not blocking the process. Also ensure you are using the Microsoft Store version of Roblox if specified in the current patch notes."
+      question: "Which API should I choose?",
+      answer: "Velocity is our high-performance engine optimized for most scripts. Xeno is a new experimental API designed for maximum stability on complex games. We recommend trying both to see which works best for your setup."
     },
     {
       question: "Does it support Mac/Mobile?",
@@ -42,7 +82,6 @@ export default function Home() {
     <div className="min-h-screen bg-background pt-16">
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden">
-        {/* Background Gradients */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-background to-background pointer-events-none" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -51,47 +90,38 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-sm">
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-              <span className="text-sm font-medium text-muted-foreground">
-                Version {latest?.version || "2.0"} Now Available
-              </span>
-            </div>
-
             <h1 className="text-5xl md:text-7xl font-display font-bold text-foreground mb-6 leading-tight">
-              Dominate with <br />
+              One Tool. <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-accent text-glow">
-                Zenon Executor
+                Dual Execution.
               </span>
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
               The most powerful, undetectable, and feature-rich script executor for Roblox.
-              Experience next-level gaming with our premium execution engine.
+              Choose between Velocity and Xeno for the ultimate gaming experience.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/download">
-                <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-lg bg-primary hover:bg-primary/90 text-white shadow-[0_0_30px_rgba(147,51,234,0.4)] hover:shadow-[0_0_50px_rgba(147,51,234,0.6)] hover:-translate-y-1 transition-all">
-                  <Download className="w-5 h-5 mr-2" />
-                  Download Now
-                </Button>
-              </Link>
-              <a href="https://discord.gg/zd3c9g8qw5" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-lg border-white/10 hover:bg-white/5 transition-all">
-                  <Disc className="w-5 h-5 mr-2" />
-                  Join Discord
-                </Button>
-              </a>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto mb-12">
+              <DownloadCard 
+                executorType="velocity" 
+                title="Velocity API" 
+                description="Our flagship execution engine. Ultra-fast, reliable, and compatible with 99% of scripts."
+              />
+              <DownloadCard 
+                executorType="xeno" 
+                title="Xeno API" 
+                description="New experimental engine. Built for maximum stability and anti-detection on heavily protected games."
+              />
             </div>
             
-            <div className="mt-12 flex items-center justify-center gap-8 text-muted-foreground">
+            <div className="flex items-center justify-center gap-8 text-muted-foreground">
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${status?.isUp ? "bg-green-500" : "bg-red-500"}`} />
                 <span>{status?.isUp ? "Service Online" : "Service Offline"}</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <Shield className="w-4 h-4 text-green-500" />
                 <span>Undetected</span>
               </div>
             </div>
@@ -103,78 +133,31 @@ export default function Home() {
       <section className="py-24 bg-secondary/30 border-y border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Powerful Features</h2>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Why Zenon?</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Built by developers for gamers. We provide the most stable and feature-rich experience.
+              We provide the most stable and feature-rich experience with multiple execution backends.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <FeatureCard
               icon={Zap}
-              title="Lightning Fast"
-              description="Optimized execution engine ensures your scripts run with zero latency and maximum performance."
+              title="Dual API Support"
+              description="Switch between Velocity and Xeno engines instantly to find the best performance for your scripts."
               delay={0}
             />
             <FeatureCard
               icon={Shield}
-              title="100% Undetectable"
-              description="Advanced anti-tamper protection and unique injection methods keep your account safe."
+              title="Advanced Stealth"
+              description="Both engines use kernel-level anti-tamper protection to bypass the latest detection methods."
               delay={0.1}
             />
             <FeatureCard
               icon={Terminal}
-              title="Custom Script Hub"
-              description="Access thousands of pre-loaded scripts directly from our built-in cloud script hub."
+              title="Universal Hub"
+              description="Access our unified script hub across all executors. One library, any engine."
               delay={0.2}
             />
-            <FeatureCard
-              icon={Code2}
-              title="Level 8 Execution"
-              description="Full support for all major script functions and libraries. Run anything you want."
-              delay={0.3}
-            />
-            <FeatureCard
-              icon={Globe}
-              title="24/7 Support"
-              description="Our dedicated support team is always available to help you with any issues."
-              delay={0.4}
-            />
-            <FeatureCard
-              icon={Download}
-              title="Auto Updates"
-              description="Never worry about updates again. Zenon automatically updates to the latest version."
-              delay={0.5}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-wrap justify-center gap-8 text-center">
-            {[
-              { label: "UNC", value: "99%" },
-              { label: "sUNC", value: "98%" },
-              { label: "Level", value: "8" },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="p-6 min-w-[200px] rounded-2xl bg-white/5 backdrop-blur-sm border border-white/5"
-              >
-                <div className="text-3xl md:text-4xl font-bold font-display text-primary mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-muted-foreground font-medium">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>
@@ -184,7 +167,7 @@ export default function Home() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">FAQ</h2>
-            <p className="text-muted-foreground">Got questions? We've got answers.</p>
+            <p className="text-muted-foreground">Common questions about our dual-API setup.</p>
           </div>
 
           <Accordion type="single" collapsible className="space-y-4">

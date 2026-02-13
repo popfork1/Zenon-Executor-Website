@@ -1,10 +1,10 @@
 import { db } from "./db";
 import { releases, type Release, type InsertRelease, systemStatus, type SystemStatus, type InsertSystemStatus } from "@shared/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 
 export interface IStorage {
-  getLatestRelease(): Promise<Release | undefined>;
-  getAllReleases(): Promise<Release[]>;
+  getLatestRelease(executorType?: string): Promise<Release | undefined>;
+  getAllReleases(executorType?: string): Promise<Release[]>;
   createRelease(release: InsertRelease): Promise<Release>;
   updateRelease(id: number, release: Partial<InsertRelease>): Promise<Release | undefined>;
   incrementDownloadCount(id: number): Promise<Release | undefined>;
@@ -14,18 +14,24 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  async getLatestRelease(): Promise<Release | undefined> {
+  async getLatestRelease(executorType: string = "velocity"): Promise<Release | undefined> {
     const [release] = await db
       .select()
       .from(releases)
-      .where(eq(releases.isLatest, true))
+      .where(
+        and(
+          eq(releases.isLatest, true),
+          eq(releases.executorType, executorType)
+        )
+      )
       .limit(1);
     
-    // If no release is marked as latest, fallback to the most recently created one
+    // If no release is marked as latest, fallback to the most recently created one for that type
     if (!release) {
       const [recent] = await db
         .select()
         .from(releases)
+        .where(eq(releases.executorType, executorType))
         .orderBy(desc(releases.createdAt))
         .limit(1);
       return recent;
@@ -34,30 +40,55 @@ export class DatabaseStorage implements IStorage {
     return release;
   }
 
-  async getAllReleases(): Promise<Release[]> {
+  async getAllReleases(executorType?: string): Promise<Release[]> {
+    if (executorType) {
+      return await db
+        .select()
+        .from(releases)
+        .where(eq(releases.executorType, executorType))
+        .orderBy(desc(releases.createdAt));
+    }
     return await db.select().from(releases).orderBy(desc(releases.createdAt));
   }
 
   async createRelease(insertRelease: InsertRelease): Promise<Release> {
     if (insertRelease.isLatest) {
-      // Unset previous latest
+      // Unset previous latest for the same executor type
       await db.update(releases)
         .set({ isLatest: false })
-        .where(eq(releases.isLatest, true));
+        .where(
+          and(
+            eq(releases.isLatest, true),
+            eq(releases.executorType, insertRelease.executorType || "velocity")
+          )
+        );
     }
     
     const [release] = await db
       .insert(releases)
-      .values(insertRelease)
+      .values({
+        ...insertRelease,
+        executorType: insertRelease.executorType || "velocity"
+      })
       .returning();
     return release;
   }
 
   async updateRelease(id: number, update: Partial<InsertRelease>): Promise<Release | undefined> {
+    const existing = await db.select().from(releases).where(eq(releases.id, id)).limit(1);
+    if (existing.length === 0) return undefined;
+    
+    const executorType = update.executorType || existing[0].executorType;
+
     if (update.isLatest) {
       await db.update(releases)
         .set({ isLatest: false })
-        .where(eq(releases.isLatest, true));
+        .where(
+          and(
+            eq(releases.isLatest, true),
+            eq(releases.executorType, executorType)
+          )
+        );
     }
 
     const [updated] = await db

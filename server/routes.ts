@@ -38,8 +38,9 @@ export async function registerRoutes(
     res.json(release);
   });
 
-  app.get(api.releases.list.path, async (_req, res) => {
-    const releases = await storage.getAllReleases();
+  app.get(api.releases.list.path, async (req, res) => {
+    const executorType = req.query.executorType as string;
+    const releases = await storage.getAllReleases(executorType);
     res.json(releases);
   });
 
@@ -76,8 +77,9 @@ export async function registerRoutes(
     res.json({ success: true });
   });
 
-  app.get(api.releases.getLatest.path, async (_req, res) => {
-    const release = await storage.getLatestRelease();
+  app.get(api.releases.getLatest.path, async (req, res) => {
+    const executorType = (req.query.executorType as string) || "velocity";
+    const release = await storage.getLatestRelease(executorType);
     if (!release) {
       return res.status(404).json({ message: "No releases found" });
     }
