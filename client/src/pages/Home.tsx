@@ -108,6 +108,20 @@ export default function Home() {
 
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">The most powerful, undetectable, and feature-rich script executor for Roblox. Choose between Velocity's API and Xeno's API for the ultimate gaming experience.</p>
 
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="bg-[#5865F2]/10 border-[#5865F2]/20 hover:bg-[#5865F2]/20 text-[#5865F2] gap-2 min-w-[200px]"
+                asChild
+              >
+                <a href="https://discord.gg/zd3c9g8qw5" target="_blank" rel="noopener noreferrer">
+                  <Disc className="w-5 h-5" />
+                  Join Discord
+                </a>
+              </Button>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto mb-12">
               <DownloadCard 
                 executorType="velocity" 
